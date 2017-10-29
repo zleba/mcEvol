@@ -8,7 +8,7 @@ The installation should be straighforward, the only external dependence is on RO
 4) Compile by calling `make`
 5) Run by calling `./mcEvol`
 
-The program will fill the histograms (into the root file) with z and PT spepctrum at various scales.
+The program will fill the histograms (into the root file) with z and pT spectrum at various scales.
 The "event loop" is in the main function in src/main.cpp, there, especially, one can set here the number of "events"
 
 During short init period the splitting functions are transformed into splines, therefore the running at LO, NLO or NNLO takes roughly the same time.
