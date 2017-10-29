@@ -6,7 +6,7 @@ ROOTLIBS   = $(shell root-config --libs)
 
 CC=g++47
 CFLAGS=-g -std=c++11 -O3 -MMD -MP -I./inc -I./usrInc $(ROOTCFLAGS)   \
-                     -I$(LHAINCDIR) -pedantic -W -Wall -Wshadow -Wno-long-long -fPIC 
+                      -pedantic -W -Wall -Wshadow -Wno-long-long -fPIC 
 
 
 
@@ -27,7 +27,6 @@ OBJS = obj/Spline.o obj/SplineGen.o obj/alphaSpline.o obj/sudakovSpline.o \
 
 DEP=$(OBJS:.o=.d)
 
-LHApdf = -L/home/radek/Dropbox/Lund/mcnet/lhapdf/lhadir/lib -lLHAPDF 
 
 LINKLIBS =     -ldl  $(ROOTLIBS)
 
