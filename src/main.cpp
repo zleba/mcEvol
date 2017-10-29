@@ -720,7 +720,7 @@ int main()
 	Histo histos;
 	histos.Init();
 
-	for(int i = 0; i < 200000*7; ++i) {
+	for(int i = 0; i < 7*2000000; ++i) {
         int fl = i % 7 - 3;
 		tmd.Init(); //Random flavour and x accoring to PDF
 		//tmd.Init(fl); //Flavour fl and x close to 1 (for KERNEL)
