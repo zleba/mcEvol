@@ -1,3 +1,5 @@
 obj/*.o
 qcdnum/*.o
 *~
+*.root
+mcEvol
