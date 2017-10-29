@@ -19,6 +19,7 @@ int RandI(int iMax);
 class Histo {
 	public:
 		void Init();
+        //Filling histogram with starting flavour flIn
         void Fill(const Branching &br,const Branching &brOld, int flIn);
 		void Count();
 	private:
@@ -673,7 +674,7 @@ int main()
 	TMD::fZmaxD = [](Double Lq2) { return 0;};
 
 	Double sCMS = 14000*14000;
-	TMD tmd(3000, iOrder, 2,  sCMS ); //Number of nodes, order, minQ2, maxQ2
+	TMD tmd(3000, iOrder, 2.,  sCMS ); //Number of nodes, order, minQ2, maxQ2
 
 	cout << "RADEK " << endl;
 
@@ -683,11 +684,11 @@ int main()
 	TH1::SetDefaultSumw2();
 	TFile *file;
 	if(iOrder == 3)
-		file= TFile::Open("ahojNNLOh.root","recreate");
+		file= TFile::Open("histoNNLOh.root","recreate");
 	else if(iOrder == 2)
-		file= TFile::Open("ahojNLOh.root","recreate");
+		file= TFile::Open("histoNLOh.root","recreate");
 	else
-		file= TFile::Open(SF("ahojLOkernel%d.root",id),"recreate");
+		file= TFile::Open(SF("histoLOkernel%d.root",id),"recreate");
 
 
 
@@ -721,7 +722,8 @@ int main()
 
 	for(int i = 0; i < 200000*7; ++i) {
         int fl = i % 7 - 3;
-		tmd.Init(); //gluon at 1
+		tmd.Init(); //Random flavour and x accoring to PDF
+		//tmd.Init(fl); //Flavour fl and x close to 1 (for KERNEL)
 		histos.Count();
 		//cout << "Event " << i << endl;
 		do {

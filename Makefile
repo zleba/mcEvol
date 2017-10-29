@@ -2,8 +2,6 @@
 ROOTCFLAGS = $(shell root-config --cflags)
 ROOTLIBS   = $(shell root-config --libs)
 
-LHALIBDIR = /home/radek/Dropbox/Lund/mcnet/lhapdf/lhadir/lib
-LHAINCDIR = /home/radek/Dropbox/Lund/mcnet/lhapdf/lhadir/include
 
 
 CC=g++47
@@ -42,11 +40,9 @@ usrObj/%.o: usrSrc/%.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 
-myTMD: $(OBJS) 
-	$(CC) -g -O3 $^  qcdnum/pij_nlo.f qcdnum/xpij2p.f qcdnum/xpns2p.f  qcdnum/ome.f qcdnum/wgplg.f -lgfortran  $(LINKLIBS)    -o myTMD
+mcEvol: $(OBJS) 
+	$(CC) -g -O3 $^  qcdnum/pij_nlo.f qcdnum/xpij2p.f qcdnum/xpns2p.f  qcdnum/ome.f qcdnum/wgplg.f -lgfortran  $(LINKLIBS)    -o $@ 
 
 
 -include $(DEP)
 
-disc/a.out: disc/disc.cpp src/integration.cpp
-	$(CC) -g -O2 $(CFLAGS) $^  qcdnum/ome.o qcdnum/wgplg.o qcdnum/xa2hgp.o $(LINKLIBS)  -lgfortran  -Wl,-R$(LHALIBDIR)   -o disc/a.out
