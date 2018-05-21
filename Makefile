@@ -47,7 +47,7 @@ yoda:
 	wget http://www.hepforge.org/archive/yoda/YODA-$(ver).tar.gz
 	tar -xvzf YODA-$(ver).tar.gz
 	mv YODA-$(ver) YODA
-	cd YODA; ./configure CC=g++47 --without-zlib
+	cd YODA; ./configure CC=g++ --without-zlib
 
 
 
