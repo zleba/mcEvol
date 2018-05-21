@@ -6,7 +6,7 @@
 #include "Splittings.h"
 
 #include "tmd.h"
-#include "TRandom3.h"
+#include <random>
 
 #include <cmath>
 #include <cstdlib>
@@ -14,9 +14,12 @@
 #include <cassert>
 #include <iomanip>
 
-#include "TMath.h"
 
-static TRandom *ranRoot = new TRandom3();
+//static TRandom *ranRoot = new TRandom3();
+
+mt19937_64 *rng = new mt19937_64(0);
+
+
 
 Double TMD::zmin   = -1;
 function<Double(Double)> TMD::fZmax  = [](Double){return -1.;};
@@ -26,18 +29,24 @@ function<Double(Double)> TMD::fZmaxD = [](Double){return  0.;};
 inline Double Rand()
 {
 	//return rand()/(RAND_MAX+0.);
-	return ranRoot->Uniform();
+
+    uniform_real_distribution<double> unif;
+    return unif(*rng);
+
+	//return ranRoot->Uniform();
 }
 int RandI(int iMax) {
 
-	return ranRoot->Integer(iMax);
+    uniform_int_distribution<int> unii(0, iMax-1);
+    return unii(*rng);
+	//return ranRoot->Integer(iMax);
 }
 
 
 TMD::TMD(int N, int IOrder,  Double q2min, Double q2max) : sudSplG(N, 0, IOrder, log(q2min), log(q2max) ),
                                                            sudSplQ(N, 1, IOrder, log(q2min), log(q2max) )
 {
-	ranRoot->SetSeed(0);
+	//ranRoot->SetSeed(0);
 	iOrder = IOrder;
 	sudInvG = sudSplG.GetInverseSpline(2*N);
 	sudInvQ = sudSplQ.GetInverseSpline(2*N);
@@ -211,7 +220,11 @@ void StartPDF::InitDistribution()
 	ADbar= 0.1939875;
 	AU = 5.107200;
 	
-	auto beta = [](Double a, Double b) { return TMath::Beta(1+a, 1+b); };
+    auto beta = [](double a, double b) {
+        double err;
+        return Integral61([&](double z) {return pow(z*z,a)*pow(1-z*z,b) * 2*z;}, 0, 1, err);
+    };
+	//auto beta = [](Double a, Double b) { return TMath::Beta(1+a, 1+b); };
 
 	dbI = ADbar * beta(-0.1, 6);
 	ubI = ADbar * beta(-0.1, 7);

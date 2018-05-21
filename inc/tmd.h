@@ -6,7 +6,6 @@
 #include "sudakovSpline.h"
 #include <cmath>
 #include <functional>
-#include "TH1D.h"
 #include <iostream>
 
 #include "Vec2.h"
