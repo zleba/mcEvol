@@ -7,6 +7,9 @@
 #include <iostream>
 #include <iomanip>
 
+#include "YODA/Histo1D.h"
+#include "YODA/WriterYODA.h"
+
 
 int RandI(int iMax);
 
@@ -41,6 +44,16 @@ class Histo {
 void Histo::Init()
 {
 	#define SF TString::Format
+
+    YODA::Histo1D histo(120, -1, 5, "", "myTitle");
+
+    histo.fill(0.3);
+    histo.fill(0.5);
+
+    for(int i = 0; i < histo.numBins(); ++i)
+        cout << i <<" "<< histo.bin(i).area() << endl;
+
+    YODA::WriterYODA::write(cout, histo);
 
 	hNev = new TH1D("hNev", "hNev", 1, -0.5, 0.5);
 
