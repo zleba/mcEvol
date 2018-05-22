@@ -2,16 +2,66 @@
 #include "sudakovSpline.h"
 #include "SplittingsIntegralSpline.h"
 
-#include "TH1D.h"
-#include "TFile.h"
 #include <iostream>
 #include <iomanip>
 
 #include "YODA/Histo1D.h"
 #include "YODA/WriterYODA.h"
 
+#include "TH1D.h"
+#include "TFile.h"
+
 
 int RandI(int iMax);
+
+/*
+struct HIST {
+    TH1D *h;
+    static vector<TH1D*> allHists;
+    HIST() {}
+    HIST(string name, string title, int nbin, double xmin, double xmax) {
+        TH1::SetDefaultSumw2();
+		h  = new TH1D(name.c_str(), title.c_str(), nbin, xmin, xmax);
+        allHists.push_back(h);
+    }
+    void Fill(double x, double w=1) {h->Fill(x, w);}
+
+    static void SaveToFile(string fName) {
+        TFile *file = TFile::Open((fName+".root").c_str(), "recreate");
+        for(unsigned i = 0; i < allHists.size(); ++i)
+            allHists[i]->Write();
+        file->Write();
+        file->Close();
+    }
+};
+vector<TH1D*> HIST::allHists = {};
+*/
+
+
+
+struct HIST {
+    YODA::Histo1D *h;
+    static vector<YODA::Histo1D*> allHists;
+    HIST() {}
+    HIST(string name, string title, int nbin, double xmin, double xmax) {
+		h  = new YODA::Histo1D(nbin, xmin, xmax,  ("/"+name).c_str(), title.c_str());
+        allHists.push_back(h);
+    }
+    void Fill(double x, double w=1) {h->fill(x, w);}
+    static void SaveToFile(string fName) {
+        ofstream myfile (fName+".yoda");
+        for(unsigned i = 0; i < allHists.size(); ++i) {
+            YODA::WriterYODA::write(myfile, allHists[i]);
+        }
+        myfile.close();
+    }
+};
+vector<YODA::Histo1D*> HIST::allHists = {};
+
+
+
+
+
 
 class Histo {
 	public:
@@ -20,25 +70,35 @@ class Histo {
         void Fill(const Branching &br,const Branching &brOld, int flIn);
 		void Count();
 	private:
-		TH1D *hNev;
+		HIST  hNev;
 
-		TH1D *hLogXSc[8][13];
-		TH1D *hLogXker[8][13][13];
+		HIST  hLogXSc[8][13];
+		HIST  hLogXker[8][13][13];
 
-		TH1D *hLogPtSc[8][3][13];
-		TH1D *hLogPtNewSc[8][3][13];
+		HIST  hLogPtSc[8][3][13];
+		HIST  hLogPtNewSc[8][3][13];
 
 		//For three x values
-		TH1D *hLogPtScX001[8][3][13];
-		TH1D *hLogPtNewScX001[8][3][13];
-		TH1D *hLogPtScX0001[8][3][13];
-		TH1D *hLogPtNewScX0001[8][3][13];
-		TH1D *hLogPtScX00001[8][3][13];
-		TH1D *hLogPtNewScX00001[8][3][13];
+		HIST  hLogPtScX001[8][3][13];
+		HIST  hLogPtNewScX001[8][3][13];
+		HIST  hLogPtScX0001[8][3][13];
+		HIST  hLogPtNewScX0001[8][3][13];
+		HIST  hLogPtScX00001[8][3][13];
+		HIST  hLogPtNewScX00001[8][3][13];
 
 		vector<Double> Scales;
 		vector<Double> LnScales;
 };
+
+template<typename T1, typename T2>
+string SFn(const char *str, T1 a, T2 b, int c=-99) {
+    char buffer [200];
+    if(c == -99)
+        sprintf (buffer, str, a, b);
+    else
+        sprintf (buffer, str, a, b, c);
+    return string(buffer);
+}
 
 
 void Histo::Init()
@@ -50,12 +110,12 @@ void Histo::Init()
     histo.fill(0.3);
     histo.fill(0.5);
 
-    for(int i = 0; i < histo.numBins(); ++i)
+    for(unsigned i = 0; i < histo.numBins(); ++i)
         cout << i <<" "<< histo.bin(i).area() << endl;
 
     YODA::WriterYODA::write(cout, histo);
 
-	hNev = new TH1D("hNev", "hNev", 1, -0.5, 0.5);
+	hNev = HIST("hNev", "hNev", 1, -0.5, 0.5);
 
 	Scales = {2.00000001, 1e1, 1e3, 1e5, 1e7, 1e8 };
 	LnScales.resize(Scales.size());
@@ -65,22 +125,22 @@ void Histo::Init()
 	for(unsigned sc = 0; sc < Scales.size(); ++sc) {
         for(int i = 0; i < 13; ++i) 
         for(int j = 0; j < 13; ++j) 
-            hLogXker[sc][i][j] = new TH1D( SF("hXKer%dSc_%d_%d",sc,i,j), SF("hXKer%dSc_%d_%d",sc,i,j), 20, -5, 0);
+            hLogXker[sc][i][j] = HIST( SFn("hXKer%dSc_%d_%d",sc,i,j), SFn("hXKer%dSc_%d_%d",sc,i,j), 20, -5, 0);
     }
 
 	for(int i = 0; i < 13; ++i) 
 	for(unsigned sc = 0; sc < Scales.size(); ++sc) {
-		hLogXSc[sc][i]  = new TH1D( SF("hXSc%d_%d",sc,i), SF("hX%.0f_%d",Scales[sc],i), 20, -5, 0);
+		hLogXSc[sc][i]  = HIST( SFn("hXSc%d_%d",sc,i), SFn("hX%.0f_%d",Scales[sc],i), 20, -5, 0);
 		for(int j = 0; j < 3; ++j) {
-			hLogPtSc[sc][j][i] = new TH1D( SF("hLogPt%dSc%d_%d",j,sc,i), SF("hLogPt%dSc%d_%d",j,int(Scales[sc]),i), 120, -1, 5);
-			hLogPtNewSc[sc][j][i] = new TH1D( SF("hLogPt%dNewSc%d_%d",j,sc,i), SF("hLogPt%dNewSc%d_%d",j,int(Scales[sc]),i), 120, -1, 5);
+			hLogPtSc[sc][j][i] = HIST( SFn("hLogPt%dSc%d_%d",j,sc,i), SFn("hLogPt%dSc%d_%d",j,int(Scales[sc]),i), 120, -1, 5);
+			hLogPtNewSc[sc][j][i] = HIST( SFn("hLogPt%dNewSc%d_%d",j,sc,i), SFn("hLogPt%dNewSc%d_%d",j,int(Scales[sc]),i), 120, -1, 5);
 
-			hLogPtScX001[sc][j][i] = new TH1D( SF("hLogPt%dSc%d_%dX001",j,sc,i), SF("hLogPt%dSc%d_%dX001",j,int(Scales[sc]),i), 120, -1, 5);
-			hLogPtNewScX001[sc][j][i] = new TH1D( SF("hLogPt%dNewSc%d_%dX001",j,sc,i), SF("hLogPt%dNewSc%d_%dX001",j,int(Scales[sc]),i), 120, -1, 5);
-			hLogPtScX0001[sc][j][i] = new TH1D( SF("hLogPt%dSc%d_%dX0001",j,sc,i), SF("hLogPt%dSc%d_%dX0001",j,int(Scales[sc]),i), 120, -1, 5);
-			hLogPtNewScX0001[sc][j][i] = new TH1D( SF("hLogPt%dNewSc%d_%dX0001",j,sc,i), SF("hLogPt%dNewSc%d_%dX0001",j,int(Scales[sc]),i), 120, -1, 5);
-			hLogPtScX00001[sc][j][i] = new TH1D( SF("hLogPt%dSc%d_%dX00001",j,sc,i), SF("hLogPt%dSc%d_%dX00001",j,int(Scales[sc]),i), 120, -1, 5);
-			hLogPtNewScX00001[sc][j][i] = new TH1D( SF("hLogPt%dNewSc%d_%dX00001",j,sc,i), SF("hLogPt%dNewSc%d_%dX00001",j,int(Scales[sc]),i), 120, -1, 5);
+			hLogPtScX001[sc][j][i] = HIST( SFn("hLogPt%dSc%d_%dX001",j,sc,i), SFn("hLogPt%dSc%d_%dX001",j,int(Scales[sc]),i), 120, -1, 5);
+			hLogPtNewScX001[sc][j][i] = HIST( SFn("hLogPt%dNewSc%d_%dX001",j,sc,i), SFn("hLogPt%dNewSc%d_%dX001",j,int(Scales[sc]),i), 120, -1, 5);
+			hLogPtScX0001[sc][j][i] = HIST( SFn("hLogPt%dSc%d_%dX0001",j,sc,i), SFn("hLogPt%dSc%d_%dX0001",j,int(Scales[sc]),i), 120, -1, 5);
+			hLogPtNewScX0001[sc][j][i] = HIST( SFn("hLogPt%dNewSc%d_%dX0001",j,sc,i), SFn("hLogPt%dNewSc%d_%dX0001",j,int(Scales[sc]),i), 120, -1, 5);
+			hLogPtScX00001[sc][j][i] = HIST( SFn("hLogPt%dSc%d_%dX00001",j,sc,i), SFn("hLogPt%dSc%d_%dX00001",j,int(Scales[sc]),i), 120, -1, 5);
+			hLogPtNewScX00001[sc][j][i] = HIST( SFn("hLogPt%dNewSc%d_%dX00001",j,sc,i), SFn("hLogPt%dNewSc%d_%dX00001",j,int(Scales[sc]),i), 120, -1, 5);
 		}
 	}
 
@@ -93,25 +153,25 @@ void Histo::Fill(const Branching &br,const Branching &brOld, int flIn)
 	for(unsigned sc = 0; sc < LnScales.size(); ++sc) {
 		if( brOld.LogQ2 < LnScales[sc] && br.LogQ2 > LnScales[sc] ) {
 			Double logX = log10(brOld.x);
-			hLogXSc[sc][brOld.id+6] ->Fill(logX, brOld.weight);
-            hLogXker[sc][flIn+6][brOld.id+6]->Fill(logX, brOld.weight);
+			hLogXSc[sc][brOld.id+6].Fill(logX, brOld.weight);
+            hLogXker[sc][flIn+6][brOld.id+6].Fill(logX, brOld.weight);
 			for(int j = 0; j < 3; ++j) {
 				Double pt2    = brOld.pT[j].norm2();
 				Double pt2New = brOld.pTmy[j].norm2();
-				hLogPtSc[sc][j][brOld.id+6]->Fill( 0.5*log10(pt2), brOld.weight);
-				hLogPtNewSc[sc][j][brOld.id+6]->Fill( 0.5*log10(pt2New), brOld.weight);
+				hLogPtSc[sc][j][brOld.id+6].Fill( 0.5*log10(pt2), brOld.weight);
+				hLogPtNewSc[sc][j][brOld.id+6].Fill( 0.5*log10(pt2New), brOld.weight);
 
 				if(abs(logX + 2) <  0.25) {
-					hLogPtScX001[sc][j][brOld.id+6]->Fill( 0.5*log10(pt2), brOld.weight);
-					hLogPtNewScX001[sc][j][brOld.id+6]->Fill( 0.5*log10(pt2New), brOld.weight);
+					hLogPtScX001[sc][j][brOld.id+6].Fill( 0.5*log10(pt2), brOld.weight);
+					hLogPtNewScX001[sc][j][brOld.id+6].Fill( 0.5*log10(pt2New), brOld.weight);
 				}
 				else if(abs(logX + 3) <  0.25) {
-					hLogPtScX0001[sc][j][brOld.id+6]->Fill( 0.5*log10(pt2), brOld.weight);
-					hLogPtNewScX0001[sc][j][brOld.id+6]->Fill( 0.5*log10(pt2New), brOld.weight);
+					hLogPtScX0001[sc][j][brOld.id+6].Fill( 0.5*log10(pt2), brOld.weight);
+					hLogPtNewScX0001[sc][j][brOld.id+6].Fill( 0.5*log10(pt2New), brOld.weight);
 				}
 				else if(abs(logX + 4) <  0.25) {
-					hLogPtScX00001[sc][j][brOld.id+6]->Fill( 0.5*log10(pt2), brOld.weight);
-					hLogPtNewScX00001[sc][j][brOld.id+6]->Fill( 0.5*log10(pt2New), brOld.weight);
+					hLogPtScX00001[sc][j][brOld.id+6].Fill( 0.5*log10(pt2), brOld.weight);
+					hLogPtNewScX00001[sc][j][brOld.id+6].Fill( 0.5*log10(pt2New), brOld.weight);
 				}
 
 			}
@@ -123,7 +183,7 @@ void Histo::Fill(const Branching &br,const Branching &brOld, int flIn)
 
 void Histo::Count()
 {
-	hNev->Fill(0);
+	hNev.Fill(0);
 }
 
 
@@ -209,7 +269,7 @@ int main()
     int id = RandI(100000);
     cout << " My id is " << id << endl;
 
-	TH1::SetDefaultSumw2();
+    /*
 	TFile *file;
 	if(iOrder == 3)
 		file= TFile::Open("histoNNLOh.root","recreate");
@@ -217,7 +277,7 @@ int main()
 		file= TFile::Open("histoNLOh.root","recreate");
 	else
 		file= TFile::Open(SF("histoLOkernel%d.root",id),"recreate");
-
+    */
 
 
 
@@ -248,7 +308,7 @@ int main()
 	Histo histos;
 	histos.Init();
 
-	for(int i = 0; i < 7*200000; ++i) {
+	for(int i = 0; i < 7*100000; ++i) {
         int fl = i % 7 - 3;
 		tmd.Init(); //Random flavour and x accoring to PDF
 		//tmd.Init(fl); //Flavour fl and x close to 1 (for KERNEL)
@@ -263,9 +323,18 @@ int main()
 			cout << "New event "<< i  << endl;
 	}
 
-	file->Write();
 
-	file->Close();
+    string fName;
+	if(iOrder == 3)
+		fName = "histoNNLOh";
+	else if(iOrder == 2)
+		fName = "histoNLOh";
+	else
+		fName = string("histoLOkernel")+to_string(id);
+
+    HIST::SaveToFile(fName);
+	//file->Write();
+	//file->Close();
 
 	return 0;
 

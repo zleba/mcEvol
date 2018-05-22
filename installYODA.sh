@@ -1,4 +1,4 @@
-ver=1.7.0
+ver=1.6.7
 
 mkdir YODA
 cd YODA

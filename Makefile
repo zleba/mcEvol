@@ -5,7 +5,7 @@ ROOTLIBS   = $(shell root-config --libs)
 
 
 CC=g++
-CFLAGS=-g -std=c++11 -O3 -MMD -MP -I./inc -I./usrInc $(ROOTCFLAGS) -I ./YODA/install/include/  \
+CFLAGS=-g -std=c++11 -O3 -MMD -MP -I./inc -I./usrInc $(ROOTCFLAGS) -isystem./YODA/install/include/  \
                       -pedantic -W -Wall -Wshadow -Wno-long-long -fPIC 
 
 
@@ -41,13 +41,6 @@ usrObj/%.o: usrSrc/%.cpp
 
 mcEvol: $(OBJS) 
 	$(CC) -g -O3 $^  qcdnum/pij_nlo.f qcdnum/xpij2p.f qcdnum/xpns2p.f  qcdnum/ome.f qcdnum/wgplg.f -lgfortran  $(LINKLIBS)   ./YODA/install/lib/libYODA.so  -Wl,-rpath=./YODA/install/lib/   -o $@ 
-
-ver=1.7.0
-yoda: 
-	wget http://www.hepforge.org/archive/yoda/YODA-$(ver).tar.gz
-	tar -xvzf YODA-$(ver).tar.gz
-	mv YODA-$(ver) YODA
-	cd YODA; ./configure CC=g++ --without-zlib
 
 
 
