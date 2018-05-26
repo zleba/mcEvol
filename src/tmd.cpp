@@ -284,7 +284,7 @@ Double StartPDF::genFirst(bool DistributeEqualy, Double &x, int &id)
 		id = RandI(7) - 3;
 
         double pdfWgt = weight * pdf[id+3](x) * 7.;
-        x = pow(10, (ceil(log10(x) * 4) - Rand())/4.); //to do step-like input
+        //x = pow(10, (ceil(log10(x) * 4) - Rand())/4.); //to do step-like input (only for testing of convolution)
         return pdfWgt;
 
 

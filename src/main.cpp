@@ -309,7 +309,7 @@ int main()
 	Histo histos;
 	histos.Init();
 
-	for(int i = 0; i < 7*100000; ++i) {
+	for(int i = 0; i < 7*1000000; ++i) {
         int fl = i % 7 - 3;
 		tmd.Init(); //Random flavour and x accoring to PDF
 		//tmd.Init(fl); //Flavour fl and x close to 1 (for KERNEL)
@@ -331,7 +331,8 @@ int main()
 	else if(iOrder == 2)
 		fName = "histoNLOh";
 	else
-		fName = string("histoLOkernel")+to_string(id);
+		//fName = string("histoLOkernel")+to_string(id);
+		fName = "histoLOh";
 
     HIST::SaveToFile(fName);
 	//file->Write();

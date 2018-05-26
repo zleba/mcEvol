@@ -39,6 +39,8 @@ obj/%.o: src/%.cpp
 mcEvol: $(OBJS) 
 	$(CC) -g -O3 $^  qcdnum/pij_nlo.f qcdnum/xpij2p.f qcdnum/xpns2p.f  qcdnum/ome.f qcdnum/wgplg.f -lgfortran  $(LINKLIBS)   ./YODA/install/lib/libYODA.so  -Wl,-rpath=$(PWD)/YODA/install/lib/   -o $@ 
 
+clean:
+	rm -f obj/*.o mcEvol
 
 
 -include $(DEP)
