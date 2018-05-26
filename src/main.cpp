@@ -14,7 +14,8 @@
 
 int RandI(int iMax);
 
-/*
+#ifdef isROOT
+#pragma message "Compiling with ROOT"
 struct HIST {
     TH1D *h;
     static vector<TH1D*> allHists;
@@ -35,10 +36,9 @@ struct HIST {
     }
 };
 vector<TH1D*> HIST::allHists = {};
-*/
 
-
-
+#else
+#pragma message ("Compiling with YODA")
 struct HIST {
     YODA::Histo1D *h;
     static vector<YODA::Histo1D*> allHists;
@@ -57,6 +57,7 @@ struct HIST {
     }
 };
 vector<YODA::Histo1D*> HIST::allHists = {};
+#endif
 
 
 
@@ -103,8 +104,7 @@ string SFn(const char *str, T1 a, T2 b, int c=-99) {
 
 void Histo::Init()
 {
-	#define SF TString::Format
-
+    /*
     YODA::Histo1D histo(120, -1, 5, "", "myTitle");
 
     histo.fill(0.3);
@@ -114,6 +114,7 @@ void Histo::Init()
         cout << i <<" "<< histo.bin(i).area() << endl;
 
     YODA::WriterYODA::write(cout, histo);
+    */
 
 	hNev = HIST("hNev", "hNev", 1, -0.5, 0.5);
 

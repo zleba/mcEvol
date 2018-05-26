@@ -1,0 +1,39 @@
+#example submit file with transfer of the executable and usage of the shared filesystem
+#transfer of executable can be handy as you can keep working on the executable localy while the job is running
+#without interference with the binary the job is running
+executable          = runscript.sh 
+arguments           = "$(Process) $(Cluster) "
+transfer_executable = True
+universe            = vanilla
+#input               = /nfs/dust/my/path/to/data/mypayload.data
+output              = logs/job$(Process).out
+error               = logs/job$(Process).err
+log                 = logs/job$(Process).log
+#_$(Cluster)_$(Process) gets substituted by cluster and process ID, putting it in the output files leads to individual files
+#for each job. Remember that regular filesystem rules about maximum files in a directory and maximum filesizes apply (warning)
+#htcondor will (as any other batchsystem) not create any directories for you, hence these need to exist.
+##########################
+#apart from 'queue' at the bottom these are optional feature requests that you might consider but do not need to set
+#for a simple test job.
+# job requirements       #
+# special requirements as nly nodes with specific linux flavours
+# e.g., requesting a node, that runs either with ScientificLinuc 6 or with CentOS 7
+
+#requirements            = (OpSysAndVer == "SL6" || OpSysAndVer == "CentOS7")
+#
+# maximum memory in MB; a job gets killed by the system when exceeding the request and the node has no spare memory
+# default is 1536M and jobs requesting > 2048 get more hit in the fairshare calculation
+#
+#RequestMemory = 1024
+#request_cpus = 2
+#
+# max run time in seconds for a job, after it gets killed by the system
+# if not set, default is 3 hours
+# longer requested job run times get more hit in the fairshare calculation
+#
+#+RequestRuntime     = 7200
+#
+#
+##########################
+queue 4
+
