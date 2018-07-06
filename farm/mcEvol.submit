@@ -2,13 +2,14 @@
 #transfer of executable can be handy as you can keep working on the executable localy while the job is running
 #without interference with the binary the job is running
 # zmax1e_2
-myDir = $ENV(MYDIR)
+
+#myDir = $ENV(MYDIR)
 #initialdir = logs/$(myTag)
 
 #+PreCmd        = "tree"
 #+PreArguments  = "-o tree_before.$(Cluster).$(Process).txt"
 
-executable          = runscript.sh 
+executable          = mcEvol.sh 
 arguments           = "$(Process) $(myDir) "
 transfer_executable = True
 universe            = vanilla
@@ -42,5 +43,4 @@ log                 = $(myDir)/logs/$(Process).log
 #
 #
 ##########################
-queue $ENV(NJOBS)
-
+queue $(NJOBS)
