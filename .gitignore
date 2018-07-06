@@ -3,3 +3,7 @@ qcdnum/*.o
 *~
 *.root
 mcEvol
+*.pdf
+*.yoda
+*.swp
+*.gz

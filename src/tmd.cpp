@@ -17,7 +17,8 @@
 
 //static TRandom *ranRoot = new TRandom3();
 
-mt19937_64 *rng = new mt19937_64(0);
+std::random_device rDev;
+mt19937_64 *rng = new mt19937_64(rDev());
 
 
 
@@ -31,6 +32,7 @@ inline Double Rand()
 	//return rand()/(RAND_MAX+0.);
 
     uniform_real_distribution<double> unif;
+    //cout << unif(*rng) << endl; 
     return unif(*rng);
 
 	//return ranRoot->Uniform();

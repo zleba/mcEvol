@@ -190,7 +190,7 @@ void Histo::Count()
 
 int main()
 {
-	int iOrder = 1;
+	int iOrder = 2;
 
 	alphaSpline::FixMasses( sqrt(2.8979862045712714), sqrt(24.904679585130495),	sqrt(28611.524722221096) );
 	//alphaSpline::FixMasses(1e20* sqrt(2.8979862045712714),1e21* sqrt(24.904679585130495),1e22*sqrt(28611.524722221096) );
@@ -309,7 +309,7 @@ int main()
 	Histo histos;
 	histos.Init();
 
-	for(int i = 0; i < 7*1000000; ++i) {
+	for(int i = 0; i < 7*2000000; ++i) {
         int fl = i % 7 - 3;
 		tmd.Init(); //Random flavour and x accoring to PDF
 		//tmd.Init(fl); //Flavour fl and x close to 1 (for KERNEL)
