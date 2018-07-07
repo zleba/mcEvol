@@ -20,6 +20,9 @@ extern "C" double corg2_(double *Z, double *FS2, double *HM2, double *OR); //Del
 //Agq (to gluon discontinuity)
 extern "C" double a2gq_(double *Z, double *FS2, double *HM2, double *OR); //regular
 
+#include <cmath>
+using std::abs;
+
 
 double DiscHQ(double z, bool isAbs)
 {
