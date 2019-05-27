@@ -107,11 +107,11 @@ void Spline<valarray<Double>>::printNodes() const
 	cout << "Spline PrintOut (N = " << N <<")" <<endl;
 	for(int i = 0; i < N+1; ++i) {
 		cout << i <<"  "<< minX+i*step <<" ";
-		for(int j = 0; j < vals[i].size(); ++j)
+		for(unsigned j = 0; j < vals[i].size(); ++j)
 			cout << vals[i][j] <<" ";
 		cout << endl;
 		cout << i <<"D "<< minX+i*step <<" ";
-		for(int j = 0; j < vals[i].size(); ++j)
+		for(unsigned j = 0; j < vals[i].size(); ++j)
 			cout << valsD[i][j] <<" ";
 		cout << endl;
 	}
@@ -190,14 +190,14 @@ Spline<T> Spline<T>::GetInverseSpline(int Nnew, bool isLinear)
 
 }
 
-//Dummy function
+//Dummy function  GetInverseSpline(int Nnew, bool isLinear )
 template<>
-Spline<valarray<Double>> Spline<valarray<Double>>::GetInverseSpline(int Nnew, bool isLinear )
+Spline<valarray<Double>> Spline<valarray<Double>>::GetInverseSpline(int Nnew, bool)
 {
 
 	Double minXnew = min( vals[0][0], vals[N][0] );
 	Double maxXnew = max( vals[0][0], vals[N][0] );
-	Double stepnew = (maxXnew-minXnew) / Nnew;
+	//Double stepnew = (maxXnew-minXnew) / Nnew;
 
 	Spline<valarray<Double>> sp(Nnew, minXnew, maxXnew);
 
@@ -248,7 +248,7 @@ Spline<Double> Spline<Double>::InverseCubic(int Nnew)
 		}
 
 		const double x1 = minX + (itL-vals.begin())*step;
-		const double x2 = minX + (itU-vals.begin())*step;
+		//const double x2 = minX + (itU-vals.begin())*step;
 
 		const double y1 = *itL;
 		const double y2 = *itU;

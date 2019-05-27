@@ -5,8 +5,10 @@
 #include <iostream>
 #include <iomanip>
 
+#ifndef isROOT
 #include "YODA/Histo1D.h"
 #include "YODA/WriterYODA.h"
+#endif
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -259,16 +261,15 @@ int main()
 	//TMD::fZmax  = [](Double Lq2) { return 1. - 0.3*exp(-Lq2/2); };
 	//TMD::fZmaxD = [](Double Lq2) { return 0.3/2.*exp(-Lq2/2); };
 
-	TMD::fZmax  = [](Double Lq2) { return 1-1e-6;};
-	TMD::fZmaxD = [](Double Lq2) { return 0;};
+	TMD::fZmax  = [](Double) { return 1-1e-6;}; //can be function of Lq2
+	TMD::fZmaxD = [](Double) { return 0;};
 
 	Double sCMS = 14000*14000;
 	TMD tmd(3000, iOrder, 2.,  sCMS ); //Number of nodes, order, minQ2, maxQ2
 
-	cout << "RADEK " << endl;
-
-    int id = RandI(100000);
-    cout << " My id is " << id << endl;
+	//cout << "RADEK " << endl;
+    //int id = RandI(100000);
+    //cout << " My id is " << id << endl;
 
     /*
 	TFile *file;
@@ -309,7 +310,7 @@ int main()
 	Histo histos;
 	histos.Init();
 
-	for(int i = 0; i < 7*2000000; ++i) {
+	for(int i = 0; i < 7*200000; ++i) {
         int fl = i % 7 - 3;
 		tmd.Init(); //Random flavour and x accoring to PDF
 		//tmd.Init(fl); //Flavour fl and x close to 1 (for KERNEL)
@@ -320,7 +321,7 @@ int main()
 			tmd.Evolve();
 			histos.Fill( tmd.GetBr(), tmd.GetBrOld(), fl);
 		} while( tmd.GetBr().LogQ2 <= log(1e8) && tmd.GetBr().x > 1e-6  );
-		if( (i >> 18)<<18  == i)
+		if( i % 100000  == 0)
 			cout << "New event "<< i  << endl;
 	}
 

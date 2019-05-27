@@ -119,19 +119,19 @@ void TMD::CompareSudakovs()
 
 	Double step = (LogQ2max-LogQ2min)/sudSplG.getN();
 	
-	int category;
+	//int category;
 	//cout << sudNew.GetLnQ2forGluon(1.8, category) << " "<< 2*alphaSpline::LnM[4]<< endl;
 	//cout << "Category " << category << endl;
 	//exit(1);
 
 	for(int i = 0; i < sudSplG.getN(); ++i) {
 		Double logQ2 = LogQ2min + i*step;
-		Double sudGOrg = sudSplG.Eval(logQ2);
-		Double sudGNew = sudNew.GetSudakovForGluon(logQ2);
+		//Double sudGOrg = sudSplG.Eval(logQ2);
+		//Double sudGNew = sudNew.GetSudakovForGluon(logQ2);
 		Double sudQOrg = sudSplQ.Eval(logQ2);
 		Double sudQNew = sudNew.GetSudakovForQuark(logQ2);
 
-		Double ratG = (sudGNew-sudGOrg)/sudGOrg;
+		//Double ratG = (sudGNew-sudGOrg)/sudGOrg;
 		Double ratQ = (sudQNew-sudQOrg)/sudQOrg;
 		cout << i<<" "<<exp(0.5*logQ2)<<" "<< sudQOrg<<" "<< sudQNew <<" "<<ratQ << endl;
 		//cout << i<<" "<< sudQOrg<<" "<< sudQNew <<" "<<ratQ << endl;
